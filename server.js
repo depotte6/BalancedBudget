@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect("mongodb://localhost/BudgetDB",
+mongoose.connect("mongodb://localhost/BudgetStore",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
