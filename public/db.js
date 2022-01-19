@@ -111,7 +111,7 @@ function checkDatabase() {
         method: 'POST',
         body: JSON.stringify(getAll.result),
         headers: {
-          Accept: 'application/json, text/plain, */*',
+          Accept: 'application/json, text/plain, 
           'Content-Type': 'application/json',
         },
       })
@@ -159,3 +159,4 @@ const saveRecord = (record) => {
 
 // Listen for app coming back online
 window.addEventListener('online', checkDatabase);
+*/
