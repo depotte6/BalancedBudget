@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://c_bear:Oblina1@cluster0.7pezx.mongodb.net/BudgetDB?retryWrites=true&w=majority",
+mongoose.connect("mongodb.net/BudgetDB?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
