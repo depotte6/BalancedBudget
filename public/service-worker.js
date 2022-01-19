@@ -1,28 +1,36 @@
 const FILES_TO_CACHE = [
-    '/'];
+    '/',
+    '/index.js',
+    '/styles.css',
+    'db.js'
+];
 
-const STATIC_CACHE = "static-cache-v1";
-const RUNTIME_CACHE = "runtime-cache";
+const STATIC_CACHE = 'static-cache-v1';
+const RUNTIME_CACHE = 'runtime-cache';
 
-self.addEventListener("install", event => {
+self.addEventListener('install', function(event) {
     event.waitUntil(
         caches
             .open(STATIC_CACHE)
-            .then(cache => cache.addAll(FILES_TO_CACHE))
-            .then(() => self.skipWaiting())
-    );
+            .then((cache) => cache.addAll(FILES_TO_CACHE)));
+            self.skipWaiting();
 });
 
-self.addEventListener("activate", event => {
+self.addEventListener('activate', function(event) {
     const currentCaches = [STATIC_CACHE, RUNTIME_CACHE];
     event.waitUntil(
       caches
         .keys()
         .then(cacheNames => {
           // return array of cache names that are old to delete
-          return cacheNames.filter(
-            cacheName => !currentCaches.includes(cacheName)
-          );
+          return Promise.all(
+            cacheNames.map(key => {
+              if (key !== CACHE_NAME) {
+                console.log('Removing old data', key);
+              }
+            })
+           // cacheName => !currentCaches.includes(cacheName)
+          )
         })
         .then(cachesToDelete => {
           return Promise.all(
@@ -35,10 +43,19 @@ self.addEventListener("activate", event => {
     );
   });
   
-  self.addEventListener("fetch", event => {
+  self.addEventListener('fetch', function(event) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(response => {
+          return response || fetch(event.request);
+        });
+      })
+    )
+    });
+
     // non GET requests are not cached and requests to other origins are not cached
-    if (
-      event.request.method !== "GET" ||
+    /*if (
+      event.request.method !== 'GET' ||
       !event.request.url.startsWith(self.location.origin)
     ) {
       event.respondWith(fetch(event.request));
@@ -46,7 +63,7 @@ self.addEventListener("activate", event => {
     }
   
     // handle runtime GET requests for data from /api routes
-    if (event.request.url.includes("/api/transactions")) {
+    if (event.request.url.includes('/api/transactions')) {
       // make network request and fallback to cache if network request fails (offline)
       event.respondWith(
         caches.open(RUNTIME_CACHE).then(cache => {
@@ -79,4 +96,4 @@ self.addEventListener("activate", event => {
       })
     );
   });
-  
+  */
