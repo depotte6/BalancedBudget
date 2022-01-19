@@ -6,11 +6,11 @@ const indexedDB =
   window.shimIndexedDB;
 
 let db;
-const request = indexedDB.open("budget", 1);
+const request = indexedDB.open("BudgetDB", 1);
 
 request.onupgradeneeded = ({ target }) => {
   let db = target.result;
-  db.createObjectStore("pending", { autoIncrement: true });
+  db.createObjectStore("BudgetStore", { autoIncrement: true });
 };
 
 request.onsuccess = ({ target }) => {
@@ -27,15 +27,15 @@ request.onerror = function(event) {
 };
 
 function saveRecord(record) {
-  const transaction = db.transaction(["pending"], "readwrite");
-  const store = transaction.objectStore("pending");
+  const transaction = db.transaction(["BudgetStore"], "readwrite");
+  const store = transaction.objectStore("BudgetStore");
 
   store.add(record);
 }
 
 function checkDatabase() {
-  const transaction = db.transaction(["pending"], "readwrite");
-  const store = transaction.objectStore("pending");
+  const transaction = db.transaction(["BudgetStore"], "readwrite");
+  const store = transaction.objectStore("BudgetStore");
   const getAll = store.getAll();
 
   getAll.onsuccess = function() {
@@ -53,8 +53,8 @@ function checkDatabase() {
       })
       .then(() => {
         // delete records if successful
-        const transaction = db.transaction(["pending"], "readwrite");
-        const store = transaction.objectStore("pending");
+        const transaction = db.transaction(["BudgetStore"], "readwrite");
+        const store = transaction.objectStore("BudgetStore");
         store.clear();
       });
     }
