@@ -7,57 +7,12 @@ const indexedDB =
 
 
 let db;
-//let budgetVersion;
+let budgetVersion;
 
 // Create a new db request for a "budget" database.
 const request = indexedDB.open("BudgetDB", 1);
 
-request.onupgradeneeded = ({ target }) => {
-  let db = target.result;
-  db.createObjectStore("pending", { autoIncrement: true });
-};
-request.onsuccess = ({ target }) => {
-  db = target.result;
-  if (navigator.onLine) {
-    checkDatabase();
-  }
-};
-
-request.onerror = function(event) {
-  console.log("Uh-oh!" + event.target.errorCode);
-};
-
-function saveRecord(record) {
-  const transaction = db.transaction(["pending"],"readwrite");
-  const store = transaction.objectStore("pending");
-  const getAll = store.getAll();
-
-  getAll.onsuccess = function() {
-    if (getAll.result.length > 0) {
-      fetch("/api/transaction/bulk", {
-        method: "POST",
-        body: JSON.stringify(getAll.result),
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json"
-        }
-      })
-      .then(response => {
-        return response.json();
-      })
-      .then(() => {
-        const transaction = db.transaction(["pending"], "readwrite");
-        const store = transaction.objectStore("pending");
-        store.clear();
-      });
-    }
-  };
-}
-
-window.addEventListener("online", checkDatabase);
-
-
-/*
+request.onupgradeneeded = function (e) {
   console.log("Upgrade needed in IndexDB");
 
   const { oldVersion } = e;
@@ -96,8 +51,8 @@ function checkDatabase() {
         method: "POST",
         body: JSON.stringify(getAll.result),
         headers: {
-        /*  Accept: "application/json, text/plain, */
-        /*  "Content-Type": "application/json",
+          Accept: "application/json, text/plain, */*",
+          "Content-Type": "application/json",
         },
       })
         .then((response) => response.json())
@@ -143,4 +98,4 @@ const saveRecord = (record) => {
 };
 
 // Listen for app coming back online
-window.addEventListener("online", checkDatabase);*/
+window.addEventListener("online", checkDatabase);
